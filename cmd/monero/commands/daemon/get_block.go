@@ -7,10 +7,10 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/spf13/cobra"
 
-	"github.com/cirocosta/go-monero/cmd/monero/display"
-	"github.com/cirocosta/go-monero/cmd/monero/options"
-	"github.com/cirocosta/go-monero/pkg/constant"
-	"github.com/cirocosta/go-monero/pkg/rpc/daemon"
+	"github.com/jjsteel/go-monero/cmd/monero/display"
+	"github.com/jjsteel/go-monero/cmd/monero/options"
+	"github.com/jjsteel/go-monero/pkg/constant"
+	"github.com/jjsteel/go-monero/pkg/rpc/daemon"
 )
 
 type getBlockCommand struct {

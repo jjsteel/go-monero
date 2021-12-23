@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/proxy"
 
-	"github.com/cirocosta/go-monero/pkg/levin"
+	"github.com/jjsteel/go-monero/pkg/levin"
 )
 
 type peerListCommand struct {

@@ -1,6 +1,6 @@
 # go-monero
 
-[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/cirocosta/go-monero)
+[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/jjsteel/go-monero)
 
 
 A multi-platform [Go] library (and command line interface) for interacting with
@@ -18,7 +18,7 @@ the functionality that the library provides.
 You can either install it by using Go building from scratch
 
 ```console
-$ GO111MODULE=on go get github.com/cirocosta/go-monero/cmd/monero
+$ GO111MODULE=on go get github.com/jjsteel/go-monero/cmd/monero
 ```
 
 or, using [docker]
@@ -209,7 +209,7 @@ Minor:          5
 To consume `go-monero` as a library for your Go project:
 
 ```console
-$ go get -u -v github.com/cirocosta/go-monero
+$ go get -u -v github.com/jjsteel/go-monero
 ```
 
 `go-monero` exposes two high-level packages: `levin` and `rpc`.
@@ -226,7 +226,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cirocosta/go-monero/pkg/levin"
+	"github.com/jjsteel/go-monero/pkg/levin"
 )
 
 func ListNodePeers(ctx context.Context, addr string) error {
@@ -276,8 +276,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cirocosta/go-monero/pkg/rpc"
-	"github.com/cirocosta/go-monero/pkg/rpc/daemon"
+	"github.com/jjsteel/go-monero/pkg/rpc"
+	"github.com/jjsteel/go-monero/pkg/rpc/daemon"
 )
 
 func ExampleGetHeight() {
@@ -331,6 +331,6 @@ Big thanks to the Monero community and other projects around cryptonote:
 [Go]: https://go.dev
 [INSTALL.md]: ./INSTALL.md
 [Monero]: https://getmonero.org/
-[releases page]: https://github.com/cirocosta/go-monero/releases
+[releases page]: https://github.com/jjsteel/go-monero/releases
 [Tor support]: #tor-support
 [docker]: https://docs.docker.com/

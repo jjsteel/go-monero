@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cirocosta/go-monero/pkg/rpc"
-	"github.com/cirocosta/go-monero/pkg/rpc/daemon"
+	"github.com/jjsteel/go-monero/pkg/rpc"
+	"github.com/jjsteel/go-monero/pkg/rpc/daemon"
 )
 
 // nolint

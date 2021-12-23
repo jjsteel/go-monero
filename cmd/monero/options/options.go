@@ -8,11 +8,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cirocosta/go-monero/cmd/monero/display"
-	mhttp "github.com/cirocosta/go-monero/pkg/http"
-	"github.com/cirocosta/go-monero/pkg/rpc"
-	"github.com/cirocosta/go-monero/pkg/rpc/daemon"
-	"github.com/cirocosta/go-monero/pkg/rpc/wallet"
+	"github.com/jjsteel/go-monero/cmd/monero/display"
+	mhttp "github.com/jjsteel/go-monero/pkg/http"
+	"github.com/jjsteel/go-monero/pkg/rpc"
+	"github.com/jjsteel/go-monero/pkg/rpc/daemon"
+	"github.com/jjsteel/go-monero/pkg/rpc/wallet"
 )
 
 // RootOpts are global options available to all commands under this package.

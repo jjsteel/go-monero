@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cirocosta/go-monero/cmd/monero/display"
-	"github.com/cirocosta/go-monero/cmd/monero/options"
-	"github.com/cirocosta/go-monero/pkg/rpc/daemon"
+	"github.com/jjsteel/go-monero/cmd/monero/display"
+	"github.com/jjsteel/go-monero/cmd/monero/options"
+	"github.com/jjsteel/go-monero/pkg/rpc/daemon"
 )
 
 type rpcAccessTrackingCommand struct {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cirocosta/go-monero/cmd/monero/options"
+	"github.com/jjsteel/go-monero/cmd/monero/options"
 )
 
 type onGetBlockHashCommand struct {

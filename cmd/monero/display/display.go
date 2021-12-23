@@ -7,7 +7,7 @@ import (
 
 	"github.com/gosuri/uitable"
 
-	"github.com/cirocosta/go-monero/pkg/constant"
+	"github.com/jjsteel/go-monero/pkg/constant"
 )
 
 // JSON pushes to stdout a pretty printed representation of a given value `v`.
