@@ -70,7 +70,7 @@ func (c *Client) Handshake(ctx context.Context) (*Node, error) {
 					Entries: []Entry{
 						{
 							Name:         "network_id",
-							Serializable: BoostString(string(MainnetNetworkId)),
+							Serializable: String(string(MainnetNetworkId)),
 						},
 					},
 				},
@@ -89,7 +89,7 @@ func (c *Client) Handshake(ctx context.Context) (*Node, error) {
 	}
 
 again:
-	responseHeaderB := make([]byte, LevinHeaderSizeBytes)
+	responseHeaderB := make([]byte, HeaderSizeBytes)
 	if _, err := io.ReadFull(c.conn, responseHeaderB); err != nil {
 		return nil, fmt.Errorf("read full header: %w", err)
 	}
@@ -128,7 +128,7 @@ func (c *Client) Ping(ctx context.Context) error {
 		return fmt.Errorf("write: %w", err)
 	}
 
-	responseHeaderB := make([]byte, LevinHeaderSizeBytes)
+	responseHeaderB := make([]byte, HeaderSizeBytes)
 	if _, err := io.ReadFull(c.conn, responseHeaderB); err != nil {
 		return fmt.Errorf("read full header: %w", err)
 	}

@@ -169,7 +169,7 @@ func TestPortableStorage(t *testing.T) {
 							Entries: []levin.Entry{
 								{
 									Name:         "foo",
-									Serializable: levin.BoostString("bar"),
+									Serializable: levin.String("bar"),
 								},
 							},
 						},
@@ -180,7 +180,7 @@ func TestPortableStorage(t *testing.T) {
 							Entries: []levin.Entry{
 								{
 									Name:         "number",
-									Serializable: levin.BoostUint32(1),
+									Serializable: levin.Uint32(1),
 								},
 							},
 						},

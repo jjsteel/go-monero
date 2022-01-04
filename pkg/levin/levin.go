@@ -10,33 +10,33 @@ import (
 )
 
 const (
-	LevinSignature uint64 = 0x0101010101012101 // Dander's Nightmare
+	Signature uint64 = 0x0101010101012101 // Dander's Nightmare
 
-	LevinProtocolVersion uint32 = 1
+	ProtocolVersion uint32 = 1
 
-	LevinPacketRequest        uint32 = 0x00000001 // Q flag
-	LevinPacketReponse        uint32 = 0x00000002 // S flag
-	LevinPacketMaxDefaultSize uint64 = 100000000  // 100MB _after_ handshake
-	LevinPacketMaxInitialSize uint64 = 256 * 1024 // 256KiB _before_ handshake
+	PacketRequest        uint32 = 0x00000001 // Q flag
+	PacketReponse        uint32 = 0x00000002 // S flag
+	PacketMaxDefaultSize uint64 = 100000000  // 100MB _after_ handshake
+	PacketMaxInitialSize uint64 = 256 * 1024 // 256KiB _before_ handshake
 
-	LevinHeaderSizeBytes = 33
+	HeaderSizeBytes = 33
 )
 
 const (
 	// Return Codes.
-	LevinOk                               int32 = 0
-	LevinErrorConnection                  int32 = -1
-	LevinErrorConnectionNotFound          int32 = -2
-	LevinErrorConnectionDestroyed         int32 = -3
-	LevinErrorConnectionTimedout          int32 = -4
-	LevinErrorConnectionNoDuplexProtocol  int32 = -5
-	LevinErrorConnectionHandlerNotDefined int32 = -6
-	LevinErrorFormat                      int32 = -7
+	Ok                               int32 = 0
+	ErrorConnection                  int32 = -1
+	ErrorConnectionNotFound          int32 = -2
+	ErrorConnectionDestroyed         int32 = -3
+	ErrorConnectionTimedout          int32 = -4
+	ErrorConnectionNoDuplexProtocol  int32 = -5
+	ErrorConnectionHandlerNotDefined int32 = -6
+	ErrorFormat                      int32 = -7
 )
 
 func IsValidReturnCode(c int32) bool {
 	// anything >= 0 is good (there are some `1`s in the code :shrug:)
-	return c >= LevinErrorFormat
+	return c >= ErrorFormat
 }
 
 const (
@@ -145,20 +145,20 @@ type Header struct {
 
 func NewRequestHeader(command uint32, length uint64) *Header {
 	return &Header{
-		Signature:       LevinSignature,
+		Signature:       Signature,
 		Length:          length,
 		ExpectsResponse: true,
 		Command:         command,
 		ReturnCode:      0,
-		Flags:           LevinPacketRequest,
-		Version:         LevinProtocolVersion,
+		Flags:           PacketRequest,
+		Version:         ProtocolVersion,
 	}
 }
 
 func NewHeaderFromBytesBytes(bytes []byte) (*Header, error) {
-	if len(bytes) != LevinHeaderSizeBytes {
+	if len(bytes) != HeaderSizeBytes {
 		return nil, fmt.Errorf("invalid header size: expected %d, has %d",
-			LevinHeaderSizeBytes, len(bytes),
+			HeaderSizeBytes, len(bytes),
 		)
 	}
 
@@ -174,9 +174,9 @@ func NewHeaderFromBytesBytes(bytes []byte) (*Header, error) {
 		header.Signature = binary.LittleEndian.Uint64(bytes[idx : idx+size])
 		idx += size
 
-		if header.Signature != LevinSignature {
+		if header.Signature != Signature {
 			return nil, fmt.Errorf("signature mismatch: expected %x, got %x",
-				LevinSignature, header.Signature,
+				Signature, header.Signature,
 			)
 		}
 	}
@@ -224,7 +224,7 @@ func NewHeaderFromBytesBytes(bytes []byte) (*Header, error) {
 		header.Version = binary.LittleEndian.Uint32(bytes[idx : idx+size])
 		idx += size
 
-		if header.Version != LevinProtocolVersion {
+		if header.Version != ProtocolVersion {
 			return nil, fmt.Errorf("invalid version %x",
 				header.Version)
 		}
@@ -235,8 +235,8 @@ func NewHeaderFromBytesBytes(bytes []byte) (*Header, error) {
 
 func (h *Header) Bytes() []byte {
 	var (
-		header = make([]byte, LevinHeaderSizeBytes) // full header
-		b      = make([]byte, 8)                    // biggest type
+		header = make([]byte, HeaderSizeBytes) // full header
+		b      = make([]byte, 8)               // biggest type
 
 		idx  = 0
 		size = 0

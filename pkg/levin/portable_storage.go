@@ -3,6 +3,7 @@ package levin
 import (
 	"encoding/binary"
 	"fmt"
+	"math"
 )
 
 const (
@@ -140,20 +141,12 @@ func NewPortableStorageFromBytes(bytes []byte) (*PortableStorage, error) {
 }
 
 func ReadString(bytes []byte) (int, string) {
-	idx := 0
-
-	n, strLen := ReadVarInt(bytes)
-	idx += n
-
+	idx, strLen := ReadVarInt(bytes)
 	return idx + strLen, string(bytes[idx : idx+strLen])
 }
 
 func ReadObject(bytes []byte) (int, Entries) {
-	idx := 0
-
-	n, i := ReadVarInt(bytes[idx:])
-	idx += n
-
+	idx, i := ReadVarInt(bytes[:])
 	entries := make(Entries, i)
 
 	for iter := 0; iter < i; iter++ {
@@ -201,76 +194,56 @@ func ReadArray(ttype byte, bytes []byte) (int, Entries) {
 	return idx, entries
 }
 
-func ReadAny(bytes []byte, ttype byte) (int, interface{}) {
-	var (
-		idx = 0
-		n   = 0
-	)
+func ReadAny(bytes []byte, ttype byte) (idx int, obj interface{}) {
+	if ttype&FlagArray != 0 {
+		internalType := ttype &^ FlagArray
+		idx, obj = ReadArray(internalType, bytes[idx:])
 
-	if ttype&BoostSerializeFlagArray != 0 {
-		internalType := ttype &^ BoostSerializeFlagArray
-		n, obj := ReadArray(internalType, bytes[idx:])
-		idx += n
-
-		return idx, obj
+		return
 	}
 
-	if ttype == BoostSerializeTypeObject {
-		n, obj := ReadObject(bytes[idx:])
-		idx += n
-
-		return idx, obj
+	switch ttype {
+	case TypeObject:
+		idx, obj = ReadObject(bytes[:])
+	case TypeUint8:
+		idx = 1
+		obj = uint8(bytes[0])
+	case TypeUint16:
+		idx = 2
+		obj = binary.LittleEndian.Uint16(bytes[:idx])
+	case TypeUint32:
+		idx = 4
+		obj = binary.LittleEndian.Uint32(bytes[:idx])
+	case TypeUint64:
+		idx = 8
+		obj = binary.LittleEndian.Uint64(bytes[:idx])
+	case TypeInt64:
+		idx = 8
+		obj = int64(binary.LittleEndian.Uint64(bytes[:idx]))
+	case TypeInt32:
+		idx = 4
+		obj = int32(binary.LittleEndian.Uint32(bytes[:idx]))
+	case TypeInt16:
+		idx = 2
+		obj = int16(binary.LittleEndian.Uint16(bytes[:idx]))
+	case TypeInt8:
+		idx = 1
+		obj = int8(bytes[0])
+	case TypeString:
+		idx, obj = ReadString(bytes[:])
+	case TypeDouble:
+		idx = 8
+		bits := binary.LittleEndian.Uint64(bytes[:idx])
+		obj = math.Float64frombits(bits)
+	case TypeBool:
+		idx = 1
+		i := int8(bytes[0])
+		obj = i > 0
+	default:
+		idx = -1
+		panic(fmt.Errorf("unknown ttype %x", ttype))
 	}
-
-	if ttype == BoostSerializeTypeUint8 {
-		obj := uint8(bytes[idx])
-		n += 1
-		idx += n
-
-		return idx, obj
-	}
-
-	if ttype == BoostSerializeTypeUint16 {
-		obj := binary.LittleEndian.Uint16(bytes[idx:])
-		n += 2
-		idx += n
-
-		return idx, obj
-	}
-
-	if ttype == BoostSerializeTypeUint32 {
-		obj := binary.LittleEndian.Uint32(bytes[idx:])
-		n += 4
-		idx += n
-
-		return idx, obj
-	}
-
-	if ttype == BoostSerializeTypeUint64 {
-		obj := binary.LittleEndian.Uint64(bytes[idx:])
-		n += 8
-		idx += n
-
-		return idx, obj
-	}
-
-	if ttype == BoostSerializeTypeInt64 {
-		obj := binary.LittleEndian.Uint64(bytes[idx:])
-		n += 8
-		idx += n
-
-		return idx, int64(obj)
-	}
-
-	if ttype == BoostSerializeTypeString {
-		n, obj := ReadString(bytes[idx:])
-		idx += n
-
-		return idx, obj
-	}
-
-	panic(fmt.Errorf("unknown ttype %x", ttype))
-	return -1, nil
+	return
 }
 
 // reads var int, returning number of bytes read and the integer in that byte
@@ -279,14 +252,14 @@ func ReadAny(bytes []byte, ttype byte) (int, interface{}) {
 func ReadVarInt(b []byte) (int, int) {
 	sizeMask := b[0] & PortableRawSizeMarkMask
 
-	switch uint32(sizeMask) {
-	case uint32(PortableRawSizeMarkByte):
+	switch sizeMask {
+	case 0:
 		return 1, int(b[0] >> 2)
-	case uint32(PortableRawSizeMarkWord):
+	case 1:
 		return 2, int((binary.LittleEndian.Uint16(b[0:2])) >> 2)
-	case PortableRawSizeMarkDword:
+	case 2:
 		return 4, int((binary.LittleEndian.Uint32(b[0:4])) >> 2)
-	case uint32(PortableRawSizeMarkInt64):
+	case 3:
 		panic("int64 not supported") // TODO
 		// return int((binary.LittleEndian.Uint64(b[0:8])) >> 2)
 		//         '-> bad
@@ -295,6 +268,7 @@ func ReadVarInt(b []byte) (int, int) {
 	}
 
 	return -1, -1
+
 }
 
 func (s *PortableStorage) Bytes() []byte {
@@ -356,7 +330,7 @@ type Section struct {
 
 func (s Section) Bytes() []byte {
 	body := []byte{
-		BoostSerializeTypeObject,
+		TypeObject,
 	}
 
 	varInB, err := VarIn(len(s.Entries))

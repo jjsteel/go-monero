@@ -109,9 +109,9 @@ func TestLevin(t *testing.T) {
 			header, err := levin.NewHeaderFromBytesBytes(bytes)
 			assert.NoError(t, err)
 			assert.Equal(t, header.Command, levin.CommandPing)
-			assert.Equal(t, header.ReturnCode, levin.LevinOk)
-			assert.Equal(t, header.Flags, levin.LevinPacketReponse)
-			assert.Equal(t, header.Version, levin.LevinProtocolVersion)
+			assert.Equal(t, header.ReturnCode, levin.Ok)
+			assert.Equal(t, header.Flags, levin.PacketReponse)
+			assert.Equal(t, header.Version, levin.ProtocolVersion)
 		})
 	})
 
